@@ -3,6 +3,9 @@ logs
 *.log
 npm-debug.log*
 
+# Compiled files created by webpack
+bundle.js
+
 # Runtime data
 pids
 *.pid
