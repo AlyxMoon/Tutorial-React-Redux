@@ -132,6 +132,25 @@ describe('application logic', () => {
             }));
         });
 
+        it('does not allow voting for entry not in current pair', () => {
+            const state = fromJS({
+                pair: ['Trainspotting', '28 Days Later'],
+                tally: {
+                    'Trainspotting': 4,
+                    '28 Days Later': 2
+                }
+            });
+            const nextState = vote(state, 'Sunshine');
+
+            expect(nextState).to.equal(fromJS({
+                pair: ['Trainspotting', '28 Days Later'],
+                tally: {
+                    'Trainspotting': 4,
+                    '28 Days Later': 2
+                }
+            }));
+        });
+
     });
 
 });
