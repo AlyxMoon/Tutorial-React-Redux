@@ -50,7 +50,8 @@ describe('reducer', () => {
             vote: {
                 pair: ['Trainspotting', '28 Days Later']
             },
-            entries: []
+            entries: [],
+            round: 1
         }));
     });
 

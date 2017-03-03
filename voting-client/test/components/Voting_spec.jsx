@@ -28,8 +28,9 @@ describe('Voting', () => {
         const vote = (entry) => votedWith = entry;
 
         const component = renderIntoDocument(
-            <Voting pair={["Trainspotting", "28 Days Later"]}
-                    vote={vote} />
+            <Voting pair = {["Trainspotting", "28 Days Later"]}
+                    vote = {vote} 
+                    round = {1} />
         );
         const buttons = scryRenderedDOMComponentsWithTag(component, 'button');
         Simulate.click(buttons[0]);

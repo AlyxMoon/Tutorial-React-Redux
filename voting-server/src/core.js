@@ -12,12 +12,14 @@ export function next(state) {
     if (entries.size === 1) {
         return state.remove('vote')
                     .remove('entries')
+                    .remove('round')
                     .set('winner', entries.first());
     }
     else {
         return state.merge({
             vote: Map({pair: entries.take(2)}),
-            entries: entries.skip(2)
+            entries: entries.skip(2),
+            round: state.find((val, key) => { return key === 'round' }, null, 0) + 1
         });
     }
 }

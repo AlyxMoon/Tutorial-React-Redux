@@ -23,6 +23,7 @@ export const Results = React.createClass({
         return this.props.winner ?
             <Winner ref = "winner" winner = {this.props.winner} /> :
             <div className = "results">
+                <h1 className = "round" >On Round: {this.props.round}</h1>
                 <div className = "tally">
                     {this.getPair().map(entry =>
                         <div key={entry} className = "entry">
@@ -48,6 +49,7 @@ function mapStateToProps(state) {
     return {
         pair: state.getIn(['vote', 'pair']),
         tally: state.getIn(['vote', 'tally']),
+        round: state.get('round'),
         winner: state.get('winner')
     };
 }

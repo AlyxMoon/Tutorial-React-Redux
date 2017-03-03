@@ -72,7 +72,8 @@ describe('reducer', () => {
             vote: {
                 pair: ['Trainspotting', '28 Days Later'],
                 tally: {Trainspotting: 1}
-            }
+            },
+            round: 1
         });
         const action = {type: 'VOTE', entry: 'Trainspotting'};
         const nextState = reducer(state, action);
@@ -82,7 +83,9 @@ describe('reducer', () => {
                 pair: ['Trainspotting', '28 Days Later'],
                 tally: {Trainspotting: 1}
             },
-            hasVoted: 'Trainspotting'
+            round: 1,
+            hasVoted: 'Trainspotting',
+            hasVotedRound: 1
         }));
     });
 
@@ -104,13 +107,15 @@ describe('reducer', () => {
         }));
     });
 
-    it('removes hasVoted on SET_STATE if pair changes', () => {
+    it('removes hasVoted on SET_STATE if round changes', () => {
         const initialState = fromJS({
             vote: {
                 pair: ['Trainspotting', '28 Days Later'],
                 tally: {Trainspotting: 1}
             },
-            hasVoted: 'Trainspotting'
+            round: 2,
+            hasVoted: 'Trainspotting',
+            hasVotedRound: 1
         });
         const action = {
             type: 'SET_STATE',
@@ -125,7 +130,8 @@ describe('reducer', () => {
         expect(nextState).to.equal(fromJS({
             vote: {
                 pair: ['Sunshine', 'Slumdog Millionaire']
-            }
+            },
+            round: 2
         }));
     });
 

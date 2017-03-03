@@ -31,6 +31,21 @@ describe('application logic', () => {
 
         it('takes the next two entries under vote', () => {
             const state = Map({
+                entries: List.of('Trainspotting', '28 Days Later', 'Sunshine'),
+                round: 1
+            });
+            const nextState = next(state);
+            expect(nextState).to.equal(Map({
+                vote: Map({
+                    pair: List.of('Trainspotting', '28 Days Later')
+                }),
+                entries: List.of('Sunshine'),
+                round: 2
+            }));
+        });
+
+        it('creates round counter with value of 1 if it does not exist', () => {
+            const state = Map({
                 entries: List.of('Trainspotting', '28 Days Later', 'Sunshine')
             });
             const nextState = next(state);
@@ -38,7 +53,8 @@ describe('application logic', () => {
                 vote: Map({
                     pair: List.of('Trainspotting', '28 Days Later')
                 }),
-                entries: List.of('Sunshine')
+                entries: List.of('Sunshine'),
+                round: 1
             }));
         });
 
@@ -51,14 +67,16 @@ describe('application logic', () => {
                         '28 Days Later': 2
                     }
                 },
-                entries: ['Sunshine', 'Millions', '127 Hours']
+                entries: ['Sunshine', 'Millions', '127 Hours'],
+                round: 2
             });
             const nextState = next(state);
             expect(nextState).to.equal(fromJS({
                 vote: {
                     pair: ['Sunshine', 'Millions']
                 },
-                entries: ['127 Hours', 'Trainspotting']
+                entries: ['127 Hours', 'Trainspotting'],
+                round: 3
             }));
         });
 
@@ -71,14 +89,16 @@ describe('application logic', () => {
                         '28 Days Later': 3
                     }
                 },
-                entries: ['Sunshine', 'Millions', '127 Hours']
+                entries: ['Sunshine', 'Millions', '127 Hours'],
+                round: 2
             });
             const nextState = next(state);
             expect(nextState).to.equal(fromJS({
                 vote: {
                     pair: ['Sunshine', 'Millions']
                 },
-                entries: ['127 Hours', 'Trainspotting', '28 Days Later']
+                entries: ['127 Hours', 'Trainspotting', '28 Days Later'],
+                round: 3
             }));
         });
 
@@ -91,7 +111,8 @@ describe('application logic', () => {
                         '28 Days Later': 2
                     }
                 },
-                entries: []
+                entries: [],
+                round: 2
             });
             const nextState = next(state);
             expect(nextState).to.equal(fromJS({

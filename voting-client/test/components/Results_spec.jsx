@@ -11,6 +11,18 @@ import {expect} from 'chai';
 
 describe('Results', () => {
 
+    it('displays current round number', () => {
+        let round = 2;
+        const component = renderIntoDocument(
+            <Results    pair = {List()}
+                        tally = {Map()}
+                        round = {round} />
+        );
+        const roundNumber = scryRenderedDOMComponentsWithClass(component, 'round')[0];
+
+        expect(roundNumber.textContent).to.contain('2');
+    });
+
     it('renders entries with vote counts or zero', () => {
         const pair = List.of('Trainspotting', '28 Days Later');
         const tally = Map({'Trainspotting': 5});

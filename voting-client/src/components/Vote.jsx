@@ -9,7 +9,7 @@ export default React.createClass({
     },
 
     isDisabled: function() {
-        return !!this.props.hasVoted;
+        return this.props.hasVotedRound === this.props.round;
     },
 
     hasVotedFor: function(entry) {
@@ -18,6 +18,7 @@ export default React.createClass({
 
     render: function() {
         return <div className="voting">
+            <h1>On Round: {this.props.round}</h1>
             {this.getPair().map(entry =>
                 <button key={entry}
                         disabled={this.isDisabled()}
