@@ -1,7 +1,7 @@
 import {List, Map, fromJS} from 'immutable';
 import {expect} from 'chai';
 
-import {setEntries, setClientID, next, vote, tallyVotes} from '../src/core';
+import {setEntries, restart, setClientID, next, vote, tallyVotes} from '../src/core';
 
 describe('application logic', () => {
 
@@ -12,7 +12,8 @@ describe('application logic', () => {
             const entries = List.of('Trainspotting', '28 Days Later');
             const nextState = setEntries(state, entries);
             expect(nextState).to.equal(Map({
-                entries: List.of('Trainspotting', '28 Days Later')
+                entries: List.of('Trainspotting', '28 Days Later'),
+                startEntries: List.of('Trainspotting', '28 Days Later')
             }));
         });
 
@@ -21,7 +22,36 @@ describe('application logic', () => {
             const entries = ['Trainspotting', '28 Days Later'];
             const nextState = setEntries(state, entries);
             expect(nextState).to.equal(Map({
-                entries: List.of('Trainspotting', '28 Days Later')
+                entries: List.of('Trainspotting', '28 Days Later'),
+                startEntries: List.of('Trainspotting', '28 Days Later')
+            }));
+        });
+
+    });
+
+    describe('restart', () => {
+
+        it('wipes the state and makes entries equal to the start entries', () => {
+            const state = fromJS({
+                entries: ['Trainspotting', '28 Days Later'],
+                startEntries: ['Trainspotting', '28 Days Later', 'Sunshine', 'The Beach'],
+                round: 2,
+                vote: {
+                    pair: ['127 Hours', 'Trance'],
+                    tally: {
+                        '127 Hours': 1,
+                        'Trance': 1
+                    },
+                    clients: {
+                        'voter1': 'Trance',
+                        'voter2': '127 Hours'
+                    }
+                }
+            });
+            const nextState = restart(state);
+            expect(nextState).to.equal(fromJS({
+                entries: ['Trainspotting', '28 Days Later', 'Sunshine', 'The Beach'],
+                startEntries: ['Trainspotting', '28 Days Later', 'Sunshine', 'The Beach']
             }));
         });
 

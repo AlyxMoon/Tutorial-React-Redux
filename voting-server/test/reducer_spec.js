@@ -9,7 +9,8 @@ describe('reducer', () => {
         const action = {type: 'SET_ENTRIES', entries: ['Trainspotting']};
         const nextState = reducer(undefined, action);
         expect(nextState).to.equal(fromJS({
-            entries: ['Trainspotting']
+            entries: ['Trainspotting'],
+            startEntries: ['Trainspotting']
         }));
     });
 
@@ -28,7 +29,8 @@ describe('reducer', () => {
         const finalState = actions.reduce(reducer, Map());
 
         expect(finalState).to.equal(fromJS({
-            winner: 'Trainspotting'
+            winner: 'Trainspotting',
+            startEntries: ['Trainspotting', '28 Days Later']
         }));
     });
 
@@ -52,7 +54,35 @@ describe('reducer', () => {
         const nextState = reducer(initialState, action);
 
         expect(nextState).to.equal(fromJS({
-            entries: ['Trainspotting']
+            entries: ['Trainspotting'],
+            startEntries: ['Trainspotting']
+        }));
+    });
+
+    it('handles RESTART', () => {
+        const state = fromJS({
+            entries: ['Trainspotting', '28 Days Later'],
+            startEntries: ['Trainspotting', '28 Days Later', 'Sunshine', 'The Beach'],
+            round: 2,
+            vote: {
+                pair: ['127 Hours', 'Trance'],
+                tally: {
+                    '127 Hours': 1,
+                    'Trance': 1
+                },
+                clients: {
+                    'voter1': 'Trance',
+                    'voter2': '127 Hours'
+                }
+            }
+        });
+        const action = {type: 'RESTART'}
+        const nextState = reducer(state, action);
+        expect(nextState).to.equal(fromJS({
+            entries: ['Sunshine', 'The Beach'],
+            startEntries: ['Trainspotting', '28 Days Later', 'Sunshine', 'The Beach'],
+            round: 1,
+            vote: {pair: ['Trainspotting', '28 Days Later']}
         }));
     });
 

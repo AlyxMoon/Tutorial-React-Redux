@@ -1,4 +1,4 @@
-import {setEntries, setClientID, next, vote, tallyVotes, INITIAL_STATE} from './core';
+import {setEntries, restart, setClientID, next, vote, tallyVotes, INITIAL_STATE} from './core';
 
 export default function reducer(state = INITIAL_STATE, action) {
     switch(action.type) {
@@ -6,6 +6,8 @@ export default function reducer(state = INITIAL_STATE, action) {
         return setEntries(state, action.entries);
     case 'SET_CLIENT_ID':
         return state.update('vote', voteState => setClientID(voteState, action.id));
+    case 'RESTART':
+        return next(restart(state));
     case 'NEXT':
         return next(state);
     case 'VOTE':
