@@ -8,10 +8,6 @@ export default React.createClass({
         return this.props.pair || [];
     },
 
-    isDisabled: function() {
-        return this.props.hasVotedRound === this.props.round;
-    },
-
     hasVotedFor: function(entry) {
         return this.props.hasVoted === entry;
     },
@@ -21,7 +17,6 @@ export default React.createClass({
             <h1>On Round: {this.props.round}</h1>
             {this.getPair().map(entry =>
                 <button key={entry}
-                        disabled={this.isDisabled()}
                         onClick={() => this.props.vote(entry)}>
                     <h1>{entry}</h1>
                     {this.hasVotedFor(entry) ?

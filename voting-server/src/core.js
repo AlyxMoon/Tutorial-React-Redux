@@ -6,6 +6,13 @@ export function setEntries(state, entries) {
     return state.set('entries', List(entries));
 }
 
+export function setClientID(voteState, id) {
+    return voteState.setIn(
+        ['clients', id],
+        ''
+    );
+}
+
 export function next(state) {
     const entries = state.get('entries')
                          .concat(getWinners(state.get('vote')));
@@ -24,16 +31,26 @@ export function next(state) {
     }
 }
 
-export function vote(voteState, entry) {
+export function vote(voteState, id, entry) {
     if(voteState.get('pair').includes(entry)) {
-        return voteState.updateIn(
-            ['tally', entry],
-            0,
-            tally => tally + 1
+        return voteState.setIn(
+            ['clients', id],
+            entry
         );
     }
     return voteState;
+}
 
+export function tallyVotes(voteState) {
+    const [a,b] = voteState.get('pair');
+    const clients = voteState.get('clients');
+
+    return voteState.merge({
+        'tally': {
+            [a]: clients.count(entry => entry === a),
+            [b]: clients.count(entry => entry === b)
+        }
+    });
 }
 
 function getWinners(vote) {

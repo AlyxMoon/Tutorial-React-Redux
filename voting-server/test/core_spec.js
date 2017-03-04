@@ -1,7 +1,7 @@
 import {List, Map, fromJS} from 'immutable';
 import {expect} from 'chai';
 
-import {setEntries, next, vote} from '../src/core';
+import {setEntries, setClientID, next, vote, tallyVotes} from '../src/core';
 
 describe('application logic', () => {
 
@@ -22,6 +22,20 @@ describe('application logic', () => {
             const nextState = setEntries(state, entries);
             expect(nextState).to.equal(Map({
                 entries: List.of('Trainspotting', '28 Days Later')
+            }));
+        });
+
+    });
+
+    describe('setClientID', () => {
+
+        it('adds a client to the list', () => {
+            const state = Map();
+            const nextState = setClientID(state, 'voter1');
+            expect(nextState).to.equal(Map({
+                clients: Map({
+                    voter1: ''
+                })
             }));
         });
 
@@ -124,31 +138,33 @@ describe('application logic', () => {
 
     describe('vote', () => {
 
-        it('creates a tally for the voted entry', () => {
+        it('changes the vote of the client', () => {
             const state = fromJS({
-                pair: ['Trainspotting', '28 Days Later']
+                pair: ['Trainspotting', '28 Days Later'],
+                clients: {
+                    'voter1': '',
+                    'voter2': ''
+                }
             });
-            const nextState = vote(state, 'Trainspotting');
+            const nextState = vote(state, 'voter1', 'Trainspotting');
             expect(nextState).to.equal(fromJS({
                 pair: ['Trainspotting', '28 Days Later'],
-                tally: {'Trainspotting': 1}
+                clients: {
+                    'voter1': 'Trainspotting',
+                    'voter2': ''
+                }
             }));
         });
 
-        it('adds to existing tally for the voted entry', () => {
+        it('adds client to list if not already in it', () => {
             const state = fromJS({
-                pair: ['Trainspotting', '28 Days Later'],
-                tally: {
-                    'Trainspotting': 3,
-                    '28 Days Later': 2
-                }
+                pair: ['Trainspotting', '28 Days Later']
             });
-            const nextState = vote(state, 'Trainspotting');
+            const nextState = vote(state, 'voter1', 'Trainspotting');
             expect(nextState).to.equal(fromJS({
                 pair: ['Trainspotting', '28 Days Later'],
-                tally: {
-                    'Trainspotting': 4,
-                    '28 Days Later': 2
+                clients: {
+                    'voter1': 'Trainspotting'
                 }
             }));
         });
@@ -156,18 +172,67 @@ describe('application logic', () => {
         it('does not allow voting for entry not in current pair', () => {
             const state = fromJS({
                 pair: ['Trainspotting', '28 Days Later'],
-                tally: {
-                    'Trainspotting': 4,
-                    '28 Days Later': 2
+                clients: {
+                    'voter1': 'Trainspotting',
+                    'voter2': ''
                 }
             });
-            const nextState = vote(state, 'Sunshine');
-
+            const nextState = vote(state, 'voter1', 'Sunshine');
             expect(nextState).to.equal(fromJS({
                 pair: ['Trainspotting', '28 Days Later'],
+                clients: {
+                    'voter1': 'Trainspotting',
+                    'voter2': ''
+                }
+            }));
+        });
+
+    });
+
+    describe('tallyVotes', () => {
+
+        it('tally entries based on client votes', () => {
+            const state = fromJS({
+                pair: ['Trainspotting', '28 Days Later'],
+                clients: {
+                    'voter1': 'Trainspotting',
+                    'voter2': 'Trainspotting'
+                }
+            });
+            const nextState = tallyVotes(state);
+            expect(nextState).to.equal(fromJS({
+                pair: ['Trainspotting', '28 Days Later'],
+                clients: {
+                    'voter1': 'Trainspotting',
+                    'voter2': 'Trainspotting'
+                },
                 tally: {
-                    'Trainspotting': 4,
-                    '28 Days Later': 2
+                    'Trainspotting': 2,
+                    '28 Days Later': 0
+                }
+            }));
+        });
+
+        it('do not tally entries for votes not in current pair', () => {
+            const state = fromJS({
+                pair: ['Trainspotting', '28 Days Later'],
+                clients: {
+                    'voter1': 'Trainspotting',
+                    'voter2': 'Sunshine',
+                    'voter3': '28 Days Later'
+                }
+            });
+            const nextState = tallyVotes(state);
+            expect(nextState).to.equal(fromJS({
+                pair: ['Trainspotting', '28 Days Later'],
+                clients: {
+                    'voter1': 'Trainspotting',
+                    'voter2': 'Sunshine',
+                    'voter3': '28 Days Later'
+                },
+                tally: {
+                    'Trainspotting': 1,
+                    '28 Days Later': 1
                 }
             }));
         });
